@@ -1,15 +1,17 @@
 import mongoose from "mongoose";
 
-const followSchema = new mongoose.Schema(
+const { Schema } = mongoose;
+
+const followSchema = new Schema(
   {
     follower: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
 
     following: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
@@ -31,6 +33,11 @@ followSchema.index(
 
 followSchema.index({
   following: 1,
+  createdAt: -1,
+});
+
+followSchema.index({
+  follower: 1,
   createdAt: -1,
 });
 

@@ -1,21 +1,26 @@
-import User from "../users/user.model.js";
-import Follow from "./follow.model.js";
-import ApiError from "../../utils/ApiError.js";
+import mongoose from "mongoose";
 
-const followUser = async (followerId, targetUserId) => {
-  if (followerId.equals(targetUserId)) {
+import Follow from "./follow.model.js";
+import User from "../users/user.model.js";
+import ApiError from "../../utils/ApiError.js";
+import { createNotification } from "../notifications/notification.service.js";
+
+const createFollow = async ({ followerId, followingId }) => {
+  if (followerId.toString() === followingId.toString()) {
     throw new ApiError(400, "You cannot follow yourself.");
   }
 
-  const targetUser = await User.findById(targetUserId).select("_id");
+  const user = await User.exists({
+    _id: followingId,
+  });
 
-  if (!targetUser) {
+  if (!user) {
     throw new ApiError(404, "User not found.");
   }
 
   const existingFollow = await Follow.exists({
     follower: followerId,
-    following: targetUserId,
+    following: followingId,
   });
 
   if (existingFollow) {
@@ -24,27 +29,130 @@ const followUser = async (followerId, targetUserId) => {
 
   const follow = await Follow.create({
     follower: followerId,
-    following: targetUserId,
+    following: followingId,
   });
+
+  //creating notification for the follow using the notification service
+  await createNotification({
+    recipient: followingId,
+    actor: followerId,
+    type: "follow",
+    message: "started following you.",
+  });
+
+  return follow;
+};;
+
+const getFollowers = async ({ userId, page, limit }) => {
+  const user = await User.exists({
+    _id: userId,
+  });
+
+  if (!user) {
+    throw new ApiError(404, "User not found.");
+  }
+
+  const skip = (page - 1) * limit;
+
+  const [followers, total] = await Promise.all([
+    Follow.find({
+      following: userId,
+    })
+      .populate("follower", "username fullName avatar")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean(),
+
+    Follow.countDocuments({
+      following: userId,
+    }),
+  ]);
+
+  return {
+    followers,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    },
+  };
+};
+
+const getFollowing = async ({ userId, page, limit }) => {
+  const user = await User.exists({
+    _id: userId,
+  });
+
+  if (!user) {
+    throw new ApiError(404, "User not found.");
+  }
+
+  const skip = (page - 1) * limit;
+
+  const [following, total] = await Promise.all([
+    Follow.find({
+      follower: userId,
+    })
+      .populate("following", "username fullName avatar")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean(),
+
+    Follow.countDocuments({
+      follower: userId,
+    }),
+  ]);
+
+  return {
+    following,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    },
+  };
+};
+
+const deleteFollow = async ({ followerId, followingId }) => {
+  const follow = await Follow.findOneAndDelete({
+    follower: followerId,
+    following: followingId,
+  });
+
+  if (!follow) {
+    throw new ApiError(404, "Follow relationship not found.");
+  }
 
   return follow;
 };
 
-const unfollowUser = async (followerId, targetUserId) => {
-  if (followerId.equals(targetUserId)) {
-    throw new ApiError(400, "You cannot unfollow yourself.");
-  }
-
-  const deletedFollow = await Follow.findOneAndDelete({
-    follower: followerId,
-    following: targetUserId,
+const getFollowCounts = async ({ userId }) => {
+  const user = await User.exists({
+    _id: userId,
   });
 
-  if (!deletedFollow) {
-    throw new ApiError(404, "You are not following this user.");
+  if (!user) {
+    throw new ApiError(404, "User not found.");
   }
 
-  return deletedFollow;
+  const [followers, following] = await Promise.all([
+    Follow.countDocuments({
+      following: userId,
+    }),
+
+    Follow.countDocuments({
+      follower: userId,
+    }),
+  ]);
+
+  return {
+    followers,
+    following,
+  };
 };
 
-export { followUser, unfollowUser };
+export { createFollow, getFollowers, getFollowing, deleteFollow, getFollowCounts };

@@ -35,7 +35,9 @@ const createNewPost = async ({ ownerId, postData, files }) => {
     );
   } catch (error) {
     await Promise.all(
-      uploadedMedia.map((media) => deleteFromCloudinary(media.publicId)),
+      uploadedMedia.map((media) =>
+        deleteFromCloudinary(media.publicId, media.type),
+      ),
     );
 
     if (error instanceof ApiError) {

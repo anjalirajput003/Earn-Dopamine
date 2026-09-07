@@ -3,19 +3,54 @@ import { Router } from "express";
 import verifyJWT from "../../middlewares/auth.middleware.js";
 import validate from "../../middlewares/validate.middleware.js";
 
-import { follow, unfollow } from "./follow.controller.js";
-
-import { followUserSchema } from "./follow.validation.js";
+import {
+  createFollowController,
+  getFollowersController,
+  getFollowingController,
+  deleteFollowController,
+  getFollowCountsController
+} from "./follow.controller.js";
+import {
+  createFollowSchema,
+  getFollowersSchema,
+  getFollowingSchema,
+} from "./follow.validation.js";
 
 const router = Router();
 
-router.post("/:userId/follow", verifyJWT, validate(followUserSchema), follow);
+router.post(
+  "/:userId",
+  verifyJWT,
+  validate(createFollowSchema),
+  createFollowController,
+);
+
+router.get(
+  "/:userId/followers",
+  verifyJWT,
+  validate(getFollowersSchema),
+  getFollowersController,
+);
+
+router.get(
+  "/:userId/following",
+  verifyJWT,
+  validate(getFollowingSchema),
+  getFollowingController,
+);
 
 router.delete(
-  "/:userId/follow",
+  "/:userId",
   verifyJWT,
-  validate(followUserSchema),
-  unfollow,
+  validate(createFollowSchema),
+  deleteFollowController,
+);
+
+router.get(
+  "/:userId/counts",
+  verifyJWT,
+  validate(createFollowSchema),
+  getFollowCountsController,
 );
 
 export default router;

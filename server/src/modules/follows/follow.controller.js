@@ -1,25 +1,86 @@
 import asyncHandler from "../../utils/asyncHandler.js";
 import ApiResponse from "../../utils/ApiResponse.js";
 
-import { followUser, unfollowUser } from "./follow.service.js";
+import {
+  createFollow,
+  getFollowers,
+  getFollowing,
+  deleteFollow,
+  getFollowCounts
+} from "./follow.service.js";
 
-const follow = asyncHandler(async (req, res) => {
-  const result = await followUser(
-    req.user._id,
-    req.validatedData.params.userId,
-  );
+const createFollowController = asyncHandler(async (req, res) => {
+  const { userId: followingId } = req.validatedData.params;
+
+  const follow = await createFollow({
+    followerId: req.user._id,
+    followingId,
+  });
 
   return res
     .status(201)
-    .json(new ApiResponse(201, "User followed successfully.", result));
+    .json(new ApiResponse(201, "User followed successfully.", follow));
 });
 
-const unfollow = asyncHandler(async (req, res) => {
-  await unfollowUser(req.user._id, req.validatedData.params.userId);
+const getFollowersController = asyncHandler(async (req, res) => {
+  const { userId } = req.validatedData.params;
+  const { page, limit } = req.validatedData.query;
+
+  const result = await getFollowers({
+    userId,
+    page,
+    limit,
+  });
 
   return res
     .status(200)
-    .json(new ApiResponse(200, "User unfollowed successfully."));
+    .json(new ApiResponse(200, result, "Followers fetched successfully."));
 });
 
-export { follow, unfollow };
+const getFollowingController = asyncHandler(async (req, res) => {
+  const { userId } = req.validatedData.params;
+  const { page, limit } = req.validatedData.query;
+
+  const result = await getFollowing({
+    userId,
+    page,
+    limit,
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, result, "Following fetched successfully."));
+});
+
+const deleteFollowController = asyncHandler(async (req, res) => {
+  const { userId: followingId } = req.validatedData.params;
+
+  await deleteFollow({
+    followerId: req.user._id,
+    followingId,
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "User unfollowed successfully."));
+});
+
+const getFollowCountsController = asyncHandler(async (req, res) => {
+  const { userId } = req.validatedData.params;
+
+  const counts = await getFollowCounts({
+    userId,
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, counts, "Follow counts fetched successfully."));
+});
+
+export {
+  createFollowController,
+  getFollowersController,
+  getFollowingController,
+  deleteFollowController,
+  getFollowCountsController
+};
