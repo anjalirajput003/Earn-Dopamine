@@ -1,7 +1,8 @@
 import asyncHandler from "../../utils/asyncHandler.js";
+
 import ApiResponse from "../../utils/ApiResponse.js";
 
-import { createCheer, removeCheer } from "./cheer.service.js";
+import { checkCheerStatus, createCheer, removeCheer } from "./cheer.service.js";
 
 const createCheerController = asyncHandler(async (req, res) => {
   const { postId } = req.validatedData.params;
@@ -13,7 +14,7 @@ const createCheerController = asyncHandler(async (req, res) => {
 
   return res
     .status(201)
-    .json(new ApiResponse(201, cheer, "Post cheered successfully."));
+    .json(new ApiResponse(201, "Post cheered successfully.", cheer));
 });
 
 const removeCheerController = asyncHandler(async (req, res) => {
@@ -26,7 +27,24 @@ const removeCheerController = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, null, "Cheer removed successfully."));
+    .json(new ApiResponse(200, "Cheer removed successfully.", null));
 });
 
-export { createCheerController, removeCheerController };
+const checkCheerStatusController = asyncHandler(async (req, res) => {
+  const { postId } = req.validatedData.params;
+
+  const result = await checkCheerStatus({
+    userId: req.user._id,
+    postId,
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "Cheer status fetched successfully.", result));
+});
+
+export {
+  createCheerController,
+  removeCheerController,
+  checkCheerStatusController,
+};

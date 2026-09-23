@@ -21,7 +21,7 @@ const createHelpController = asyncHandler(async (req, res) => {
 
   return res
     .status(201)
-    .json(new ApiResponse(201, help, "Help offered successfully."));
+    .json(new ApiResponse(201, "Help offered successfully.", help));
 });
 
 const getReceivedHelpController = asyncHandler(async (req, res) => {
@@ -38,8 +38,8 @@ const getReceivedHelpController = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        result,
         "Received help offers fetched successfully.",
+        result,
       ),
     );
 });
@@ -56,7 +56,7 @@ const getSentHelpController = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(
-      new ApiResponse(200, result, "Sent help offers fetched successfully."),
+      new ApiResponse(200, "Sent help offers fetched successfully.", result),
     );
 });
 
@@ -72,7 +72,7 @@ const respondToHelpController = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, help, `Help offer ${status} successfully.`));
+    .json(new ApiResponse(200, `Help offer ${status} successfully.`, help));
 });
 
 const completeHelpController = asyncHandler(async (req, res) => {
@@ -85,7 +85,7 @@ const completeHelpController = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, help, "Help completed successfully."));
+    .json(new ApiResponse(200, "Help completed successfully.", help));
 });
 
 export {

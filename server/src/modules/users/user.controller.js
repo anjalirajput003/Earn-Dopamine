@@ -4,7 +4,7 @@ import {
   updateCoverImage,
   getUserByUsername,
   searchUsers,
-  checkUsernameAvailability
+  checkUsernameAvailability,
 } from "../../modules/users/user.service.js";
 import ApiResponse from "../../utils/ApiResponse.js";
 import asyncHandler from "../../utils/asyncHandler.js";
@@ -14,7 +14,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, updatedUser, "Profile updated successfully."));
+    .json(new ApiResponse(200, "Profile updated successfully.", updatedUser));
 });
 
 const updateUserAvatar = asyncHandler(async (req, res) => {
@@ -22,7 +22,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, updatedUser, "Avatar updated successfully."));
+    .json(new ApiResponse(200, "Avatar updated successfully.", updatedUser));
 });
 
 const updateUserCoverImage = asyncHandler(async (req, res) => {
@@ -31,7 +31,7 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(
-      new ApiResponse(200, updatedUser, "Cover image updated successfully."),
+      new ApiResponse(200, "Cover image updated successfully.", updatedUser),
     );
 });
 
@@ -75,4 +75,11 @@ const checkUsername = asyncHandler(async (req, res) => {
   );
 });
 
-export { updateUserProfile, updateUserAvatar, updateUserCoverImage, getUserProfile, searchAllUsers, checkUsername };
+export {
+  updateUserProfile,
+  updateUserAvatar,
+  updateUserCoverImage,
+  getUserProfile,
+  searchAllUsers,
+  checkUsername,
+};

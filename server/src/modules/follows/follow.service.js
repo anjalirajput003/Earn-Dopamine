@@ -32,7 +32,7 @@ const createFollow = async ({ followerId, followingId }) => {
     following: followingId,
   });
 
-  //creating notification for the follow using the notification service
+  // Creating notification for the follow using the notification service
   await createNotification({
     recipient: followingId,
     actor: followerId,
@@ -41,7 +41,7 @@ const createFollow = async ({ followerId, followingId }) => {
   });
 
   return follow;
-};;
+};
 
 const getFollowers = async ({ userId, page, limit }) => {
   const user = await User.exists({
@@ -155,4 +155,22 @@ const getFollowCounts = async ({ userId }) => {
   };
 };
 
-export { createFollow, getFollowers, getFollowing, deleteFollow, getFollowCounts };
+const checkFollowStatus = async ({ followerId, followingId }) => {
+  const following = await Follow.exists({
+    follower: followerId,
+    following: followingId,
+  });
+
+  return {
+    isFollowing: Boolean(following),
+  };
+};
+
+export {
+  createFollow,
+  getFollowers,
+  getFollowing,
+  deleteFollow,
+  getFollowCounts,
+  checkFollowStatus,
+};

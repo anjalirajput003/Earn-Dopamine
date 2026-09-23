@@ -111,6 +111,26 @@ const getUserPosts = async ({ username, page, limit }) => {
   };
 };
 
+const deletePostById = async ({ postId, ownerId }) => {
+  const post = await Post.findOne({
+    _id: postId,
+    owner: ownerId,
+  });
+
+  if (!post) {
+    throw new ApiError(
+      404,
+      "Post not found or you are not allowed to delete it.",
+    );
+  }
+
+  await Post.deleteOne({
+    _id: postId,
+  });
+
+  return post;
+};
+
 //feed service
 const getFeedPosts = async ({ page, limit }) => {
   const skip = (page - 1) * limit;
@@ -146,4 +166,10 @@ const getFeedPosts = async ({ page, limit }) => {
   };
 };
 
-export { createNewPost, getFeedPosts, getPostById, getUserPosts };
+export {
+  createNewPost,
+  getFeedPosts,
+  getPostById,
+  getUserPosts,
+  deletePostById,
+};

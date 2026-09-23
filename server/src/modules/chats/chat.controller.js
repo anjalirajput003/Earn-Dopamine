@@ -2,7 +2,7 @@ import asyncHandler from "../../utils/asyncHandler.js";
 
 import ApiResponse from "../../utils/ApiResponse.js";
 
-import { getOrCreateConversation } from "./chat.service.js";
+import { getOrCreateConversation, getUserConversations } from "./chat.service.js";
 
 const createConversationController = asyncHandler(async (req, res) => {
   const { otherUserId } = req.validatedData.params;
@@ -23,4 +23,20 @@ const createConversationController = asyncHandler(async (req, res) => {
     );
 });
 
-export { createConversationController };
+const getUserConversationsController = asyncHandler(async (req, res) => {
+  const conversations = await getUserConversations({
+    userId: req.user._id,
+  });
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        "Conversations fetched successfully.",
+        conversations,
+      ),
+    );
+});
+
+export { createConversationController, getUserConversationsController };

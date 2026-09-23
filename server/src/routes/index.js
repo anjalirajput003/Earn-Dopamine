@@ -13,6 +13,7 @@ import helpRouter from "../modules/helps/help.routes.js";
 import notificationRouter from "../modules/notifications/notification.routes.js";
 import chatRouter from "../modules/chats/chat.routes.js";
 import studyRoomRouter from "../modules/studyRooms/studyRoom.routes.js";
+import saveRouter from "../modules/saves/save.routes.js";
 
 const router = Router();
 
@@ -21,7 +22,7 @@ router.use("/health", healthRouter);
 router.use("/users", userRouter);
 router.use("/posts", postRouter);
 router.use("/cheers", cheerRouter);
-router.use("/comments", commentRouter); 
+router.use("/comments", commentRouter);
 router.use("/goals", goalRouter);
 router.use("/milestones", milestoneRouter);
 router.use("/follows", followRouter);
@@ -29,5 +30,6 @@ router.use("/helps", helpRouter);
 router.use("/notifications", notificationRouter);
 router.use("/conversations", chatRouter);
 router.use("/study-rooms", studyRoomRouter);
+router.use("/saves", saveRouter);
 
 export default router;

@@ -5,8 +5,20 @@ import validate from "../../middlewares/validate.middleware.js";
 import postUpload from "../../middlewares/post-upload.middleware.js";
 import validatePostMedia from "../../middlewares/validate-post-media.middleware.js";
 
-import { createPost, getFeed, getPost, getUserPostsController } from "./post.controller.js";
-import { createPostSchema, getFeedSchema, getPostSchema, getUserPostsSchema } from "./post.validation.js";
+import {
+  createPost,
+  getFeed,
+  getPost,
+  getUserPostsController,
+  deletePost,
+} from "./post.controller.js";
+import {
+  createPostSchema,
+  getFeedSchema,
+  getPostSchema,
+  getUserPostsSchema,
+  deletePostSchema,
+} from "./post.validation.js";
 
 const router = Router();
 
@@ -30,7 +42,8 @@ router.get(
   getUserPostsController,
 );
 
-router.get("/:postId", verifyJWT, validate(getPostSchema), getPost);
+router.delete("/:postId", verifyJWT, validate(deletePostSchema), deletePost);
 
+router.get("/:postId", verifyJWT, validate(getPostSchema), getPost);
 
 export default router;

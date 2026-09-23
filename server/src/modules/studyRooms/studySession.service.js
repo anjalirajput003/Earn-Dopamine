@@ -147,6 +147,37 @@ const getCurrentStudySession = async ({ userId, roomId }) => {
   return session;
 };
 
+const getParticipantStudySessions = async ({ userId, roomId }) => {
+  const room = await StudyRoom.findOne({
+    _id: roomId,
+    participants: userId,
+  })
+    .populate("participants", "username fullName avatar isVerified")
+    .lean();
+
+  if (!room) {
+    throw new ApiError(
+      404,
+      "Study room not found or you are not a participant.",
+    );
+  }
+
+  const sessions = await StudySession.find({
+    room: roomId,
+    user: { $in: room.participants.map((participant) => participant._id) },
+    status: { $in: ["active", "paused"] },
+  }).lean();
+
+  const sessionByUserId = new Map(
+    sessions.map((session) => [session.user.toString(), session]),
+  );
+
+  return room.participants.map((participant) => ({
+    user: participant,
+    session: sessionByUserId.get(participant._id.toString()) || null,
+  }));
+};
+
 const getStudyStatistics = async ({ userId, roomId }) => {
   await getParticipantRoom({ userId, roomId });
 
@@ -263,4 +294,5 @@ export {
   stopStudySession,
   getCurrentStudySession,
   getStudyStatistics,
+  getParticipantStudySessions
 };

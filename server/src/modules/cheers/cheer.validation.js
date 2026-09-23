@@ -29,4 +29,15 @@ const removeCheerSchema = z.object({
   query: z.object({}),
 });
 
-export { createCheerSchema, removeCheerSchema };
+const checkCheerStatusSchema = z.object({
+  body: z.object({}),
+  params: z.object({
+    postId: z
+      .string()
+      .trim()
+      .refine((value) => mongoose.isValidObjectId(value), "Invalid post ID."),
+  }),
+  query: z.object({}),
+});
+
+export { createCheerSchema, removeCheerSchema, checkCheerStatusSchema };

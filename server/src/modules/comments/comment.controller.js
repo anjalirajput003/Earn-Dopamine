@@ -15,7 +15,7 @@ const createCommentController = asyncHandler(async (req, res) => {
 
   return res
     .status(201)
-    .json(new ApiResponse(201, comment, "Comment created successfully."));
+    .json(new ApiResponse(201, "Comment created successfully.", comment));
 });
 
 const getCommentsController = asyncHandler(async (req, res) => {
@@ -30,7 +30,7 @@ const getCommentsController = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, result, "Comments fetched successfully."));
+    .json(new ApiResponse(200, "Comments fetched successfully.", result));
 });
 
 const deleteCommentController = asyncHandler(async (req, res) => {
@@ -43,7 +43,7 @@ const deleteCommentController = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, null, "Comment deleted successfully."));
+    .json(new ApiResponse(200, "Comment deleted successfully.", null));
 });
 
 export { createCommentController, getCommentsController, deleteCommentController };

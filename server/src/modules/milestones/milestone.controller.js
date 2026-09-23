@@ -24,7 +24,7 @@ const createMilestoneController = asyncHandler(async (req, res) => {
 
   return res
     .status(201)
-    .json(new ApiResponse(201, milestone, "Milestone created successfully."));
+    .json(new ApiResponse(201, "Milestone created successfully.", milestone));
 });
 
 const getMilestonesController = asyncHandler(async (req, res) => {
@@ -37,7 +37,7 @@ const getMilestonesController = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, milestones, "Milestones fetched successfully."));
+    .json(new ApiResponse(200, "Milestones fetched successfully.", milestones));
 });
 
 const updateMilestoneController = asyncHandler(async (req, res) => {

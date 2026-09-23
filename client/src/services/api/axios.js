@@ -8,6 +8,14 @@ const api = axios.create({
   },
 });
 
+api.interceptors.request.use((config) => {
+  if (config.data instanceof FormData) {
+    delete config.headers["Content-Type"];
+  }
+
+  return config;
+});
+
 let isRefreshing = false;
 let failedQueue = [];
 
@@ -24,12 +32,12 @@ const processQueue = (error) => {
 };
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => response, // in case the request succeeded and server responded the response would go directly to the component that made the request
   async (error) => {
     const originalRequest = error.config;
 
-    if (!error.response || error.response.status !== 401) {
-      return Promise.reject(error);
+    if (!error.response || error.response.status !== 401) { //the response is the server response 
+      return Promise.reject(error); 
     }
 
     if (
@@ -54,7 +62,7 @@ api.interceptors.response.use(
       processQueue(null);
 
       return api(originalRequest);
-    } catch (refreshError) {
+    } catch (refreshError) {  //incase the refresh-token has expired
       processQueue(refreshError);
 
       return Promise.reject(refreshError);

@@ -3,7 +3,6 @@ import User from "../users/user.model.js";
 import ApiError from "../../utils/ApiError.js";
 
 const createStudyRoom = async ({ userId, name }) => {
-
   const userExists = await User.exists({ _id: userId });
 
   if (!userExists) {
@@ -26,7 +25,6 @@ const createStudyRoom = async ({ userId, name }) => {
 };
 
 const getStudyRoom = async ({ userId, roomId }) => {
-
   const studyRoom = await StudyRoom.findById(roomId)
     .populate("creator", "username fullName avatar isVerified")
     .populate("participants", "username fullName avatar isVerified")
@@ -40,7 +38,6 @@ const getStudyRoom = async ({ userId, roomId }) => {
 };
 
 const joinStudyRoom = async ({ userId, roomId }) => {
-
   const studyRoom = await StudyRoom.findById(roomId);
 
   if (!studyRoom) {
@@ -63,7 +60,6 @@ const joinStudyRoom = async ({ userId, roomId }) => {
 };
 
 const leaveStudyRoom = async ({ userId, roomId }) => {
-
   const studyRoom = await StudyRoom.findById(roomId);
 
   if (!studyRoom) {
@@ -91,4 +87,52 @@ const leaveStudyRoom = async ({ userId, roomId }) => {
   return studyRoom;
 };
 
-export { createStudyRoom, getStudyRoom, joinStudyRoom, leaveStudyRoom };
+const getMyStudyRooms = async ({ userId }) => {
+  const studyRooms = await StudyRoom.find({
+    participants: userId,
+  })
+    .populate("creator", "username fullName avatar isVerified")
+    .populate("participants", "username fullName avatar isVerified")
+    .sort({ createdAt: -1 })
+    .lean();
+
+  return studyRooms;
+};
+
+const getDiscoverableStudyRooms = async ({ userId }) => {
+  const studyRooms = await StudyRoom.find({
+    participants: { $ne: userId },
+  })
+    .populate("creator", "username fullName avatar isVerified")
+    .populate("participants", "username fullName avatar isVerified")
+    .sort({ createdAt: -1 })
+    .lean();
+
+  return studyRooms;
+};
+
+const deleteStudyRoom = async ({ userId, roomId }) => {
+  const studyRoom = await StudyRoom.findById(roomId);
+
+  if (!studyRoom) {
+    throw new ApiError(404, "Study room not found.");
+  }
+
+  if (studyRoom.creator.toString() !== userId.toString()) {
+    throw new ApiError(403, "Only the room creator can delete the study room.");
+  }
+
+  await StudyRoom.findByIdAndDelete(roomId);
+
+  return studyRoom;
+};
+
+export {
+  createStudyRoom,
+  getStudyRoom,
+  joinStudyRoom,
+  leaveStudyRoom,
+  getMyStudyRooms,
+  deleteStudyRoom,
+  getDiscoverableStudyRooms
+};

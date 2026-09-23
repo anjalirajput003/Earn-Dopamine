@@ -25,15 +25,6 @@ initializeSocket(io);
 //this socket io middleware will authenticate the socket before a connection is accepted
 io.use(authenticateSocket);
 
-// io.on("connection", (socket) => {
-//   console.log(`Socket connected for user: ${socket.user._id}`);
-
-//   socket.join(`user:${socket.user._id}`);
-
-//   socket.on("disconnect", (reason) => {
-//     console.log(`Socket disconnected for user: ${socket.user._id}`, reason);
-//   });
-// });
 io.on("connection", (socket) => {
   console.log(`Socket connected for user: ${socket.user._id}`);
 

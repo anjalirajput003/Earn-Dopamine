@@ -124,4 +124,19 @@ const removeCheer = async ({ userId, postId }) => {
   }
 };
 
-export { createCheer, removeCheer };
+const checkCheerStatus = async ({ userId, postId }) => {
+  if (!mongoose.isValidObjectId(userId)) {
+    throw new ApiError(400, "Invalid user ID.");
+  }
+
+  const cheer = await Cheer.exists({
+    user: userId,
+    post: postId,
+  });
+
+  return {
+    cheered: Boolean(cheer),
+  };
+};
+
+export { createCheer, removeCheer, checkCheerStatus };

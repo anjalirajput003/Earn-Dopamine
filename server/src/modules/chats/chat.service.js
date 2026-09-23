@@ -5,6 +5,7 @@ import Conversation from "./conversation.model.js";
 import User from "../users/user.model.js";
 
 import ApiError from "../../utils/ApiError.js";
+import Message from "./message.model.js";
 
 const getOrCreateConversation = async ({ userId, otherUserId }) => {
   if (userId.toString() === otherUserId.toString()) {
@@ -56,4 +57,54 @@ const getOrCreateConversation = async ({ userId, otherUserId }) => {
   return conversation;
 };
 
-export { getOrCreateConversation };
+const getUserConversations = async ({ userId }) => {
+  if (!mongoose.isValidObjectId(userId)) {
+    throw new ApiError(400, "Invalid user ID.");
+  }
+
+  const conversations = await Conversation.find({
+    $or: [{ participantOne: userId }, { participantTwo: userId }],
+  })
+    .sort({ updatedAt: -1 })
+    .populate("participantOne", "username fullName avatar isVerified")
+    .populate("participantTwo", "username fullName avatar isVerified")
+    .lean();
+
+  const result = await Promise.all(
+    conversations.map(async (conversation) => {
+      const isParticipantOne =
+        conversation.participantOne._id.toString() === userId.toString();
+
+      const otherUser = isParticipantOne
+        ? conversation.participantTwo
+        : conversation.participantOne;
+
+      const [lastMessage, unreadCount] = await Promise.all([
+        Message.findOne({
+          conversation: conversation._id,
+        })
+          .sort({ createdAt: -1 })
+          .select("sender content createdAt isRead")
+          .lean(),
+
+        Message.countDocuments({
+          conversation: conversation._id,
+          sender: { $ne: userId },
+          isRead: false,
+        }),
+      ]);
+
+      return {
+        _id: conversation._id,
+        otherUser,
+        lastMessage,
+        unreadCount,
+        updatedAt: conversation.updatedAt,
+      };
+    }),
+  );
+
+  return result;
+};
+
+export { getOrCreateConversation, getUserConversations };

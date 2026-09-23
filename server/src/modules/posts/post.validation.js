@@ -57,6 +57,17 @@ const getUserPostsSchema = z.object({
   }),
 });
 
+const deletePostSchema = z.object({
+  body: z.object({}),
+  params: z.object({
+    postId: z
+      .string()
+      .trim()
+      .refine((value) => mongoose.isValidObjectId(value), "Invalid post ID."),
+  }),
+  query: z.object({}),
+});
+
 //feed validator
 const getFeedSchema = z.object({
   body: z.object({}),
@@ -79,4 +90,10 @@ const getFeedSchema = z.object({
   }),
 });
 
-export { createPostSchema, getFeedSchema, getPostSchema, getUserPostsSchema};
+export {
+  createPostSchema,
+  getFeedSchema,
+  getPostSchema,
+  getUserPostsSchema,
+  deletePostSchema,
+};

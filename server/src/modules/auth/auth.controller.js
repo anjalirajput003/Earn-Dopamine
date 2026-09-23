@@ -37,15 +37,7 @@ const login = asyncHandler(async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     })
     .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        {
-          user,
-        },
-        "Logged in successfully.",
-      ),
-    );
+    .json(new ApiResponse(200, "Logged in successfully.", { user }));
 });
 
 const logout = asyncHandler(async (req, res) => {
@@ -94,7 +86,7 @@ const getMe = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, user, "Current user fetched successfully."));
+    .json(new ApiResponse(200, "Current user fetched successfully.", user));
 });
 
 export { login, register, logout, refreshToken, getMe };

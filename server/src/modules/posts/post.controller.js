@@ -1,6 +1,12 @@
 import asyncHandler from "../../utils/asyncHandler.js";
 import ApiResponse from "../../utils/ApiResponse.js";
-import { createNewPost, getFeedPosts, getPostById, getUserPosts } from "./post.service.js";
+import {
+  createNewPost,
+  getFeedPosts,
+  getPostById,
+  getUserPosts,
+  deletePostById,
+} from "./post.service.js";
 
 //posts controller
 const createPost = asyncHandler(async (req, res) => {
@@ -34,6 +40,17 @@ const getUserPostsController = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "User posts fetched successfully.", posts));
 });
 
+const deletePost = asyncHandler(async (req, res) => {
+  const post = await deletePostById({
+    postId: req.validatedData.params.postId,
+    ownerId: req.user._id,
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "Post deleted successfully.", post));
+});
+
 //feed controller -> because feed consists of posts that's why it is in the posts module
 const getFeed = asyncHandler(async (req, res) => {
   const feed = await getFeedPosts(req.validatedData.query);
@@ -43,4 +60,4 @@ const getFeed = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "Feed fetched successfully.", feed));
 });
 
-export { createPost, getFeed, getPost, getUserPostsController };
+export { createPost, getFeed, getPost, getUserPostsController, deletePost };

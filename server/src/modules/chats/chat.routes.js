@@ -2,7 +2,7 @@ import { Router } from "express";
 
 import verifyJWT from "../../middlewares/auth.middleware.js";
 import validate from "../../middlewares/validate.middleware.js";
-import { createConversationController } from "./chat.controller.js";
+import { createConversationController, getUserConversationsController } from "./chat.controller.js";
 import {
   sendMessageController,
   getMessagesController,
@@ -17,6 +17,8 @@ import {
 } from "./chat.validation.js";
 
 const router = Router();
+
+router.get("/", verifyJWT, getUserConversationsController);
 
 //create conversation
 router.post(

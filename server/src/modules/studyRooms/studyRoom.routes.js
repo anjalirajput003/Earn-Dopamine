@@ -14,6 +14,9 @@ import {
   getRoom,
   joinRoom,
   leaveRoom,
+  getMyRooms,
+  deleteRoom,
+  discoverRooms,
 } from "./studyRoom.controller.js";
 
 import {
@@ -22,7 +25,8 @@ import {
   resumeSession,
   stopSession,
   getCurrentSession,
-  getStudyStats
+  getStudyStats,
+  getParticipantSessions,
 } from "./studySession.controller.js";
 
 import { studySessionSchema } from "./studySession.validation.js";
@@ -33,9 +37,15 @@ const router = Router();
 
 router.post("/", verifyJWT, validate(createStudyRoomSchema), createRoom);
 
+router.get("/", verifyJWT, getMyRooms);
+
+router.get("/discover", verifyJWT, discoverRooms);
+
 // get study room
 
 router.get("/:roomId", verifyJWT, validate(studyRoomIdSchema), getRoom);
+
+router.delete("/:roomId", verifyJWT, validate(studyRoomIdSchema), deleteRoom);
 
 // join study room
 
@@ -93,6 +103,14 @@ router.get(
   verifyJWT,
   validate(studySessionSchema),
   getCurrentSession,
+);
+
+// get participant study sessions
+router.get(
+  "/:roomId/session/participants",
+  verifyJWT,
+  validate(studySessionSchema),
+  getParticipantSessions,
 );
 
 // get study statistics

@@ -1,4 +1,5 @@
 import asyncHandler from "../../utils/asyncHandler.js";
+
 import ApiResponse from "../../utils/ApiResponse.js";
 
 import {
@@ -19,7 +20,7 @@ const getNotificationsController = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, result, "Notifications fetched successfully."));
+    .json(new ApiResponse(200, "Notifications fetched successfully.", result));
 });
 
 const markNotificationAsReadController = asyncHandler(async (req, res) => {
@@ -35,8 +36,8 @@ const markNotificationAsReadController = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        notification,
         "Notification marked as read successfully.",
+        notification,
       ),
     );
 });
@@ -51,8 +52,8 @@ const getUnreadNotificationCountController = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        result,
         "Unread notification count fetched successfully.",
+        result,
       ),
     );
 });
@@ -67,8 +68,8 @@ const markAllNotificationsAsReadController = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        result,
         "All notifications marked as read successfully.",
+        result,
       ),
     );
 });

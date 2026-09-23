@@ -6,7 +6,8 @@ import {
   getFollowers,
   getFollowing,
   deleteFollow,
-  getFollowCounts
+  getFollowCounts,
+  checkFollowStatus,
 } from "./follow.service.js";
 
 const createFollowController = asyncHandler(async (req, res) => {
@@ -34,7 +35,7 @@ const getFollowersController = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, result, "Followers fetched successfully."));
+    .json(new ApiResponse(200, "Followers fetched successfully.", result));
 });
 
 const getFollowingController = asyncHandler(async (req, res) => {
@@ -49,7 +50,7 @@ const getFollowingController = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, result, "Following fetched successfully."));
+    .json(new ApiResponse(200, "Following fetched successfully.", result));
 });
 
 const deleteFollowController = asyncHandler(async (req, res) => {
@@ -62,7 +63,7 @@ const deleteFollowController = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, null, "User unfollowed successfully."));
+    .json(new ApiResponse(200, "User unfollowed successfully.", null));
 });
 
 const getFollowCountsController = asyncHandler(async (req, res) => {
@@ -74,7 +75,20 @@ const getFollowCountsController = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, counts, "Follow counts fetched successfully."));
+    .json(new ApiResponse(200, "Follow counts fetched successfully.", counts));
+});
+
+const checkFollowStatusController = asyncHandler(async (req, res) => {
+  const { userId: followingId } = req.validatedData.params;
+
+  const result = await checkFollowStatus({
+    followerId: req.user._id,
+    followingId,
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "Follow status fetched successfully.", result));
 });
 
 export {
@@ -82,5 +96,6 @@ export {
   getFollowersController,
   getFollowingController,
   deleteFollowController,
-  getFollowCountsController
+  getFollowCountsController,
+  checkFollowStatusController,
 };
