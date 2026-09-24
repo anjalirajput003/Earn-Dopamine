@@ -67,11 +67,13 @@ api.interceptors.response.use(
     isRefreshing = true;
 
     try {
-      await api.post("/auth/refresh-token");
+     const response = await api.post("/auth/refresh-token");
 
-      processQueue(null);
+     setAccessToken(response.data.accessToken);
 
-      return api(originalRequest);
+     processQueue(null);
+
+     return api(originalRequest);
     } catch (refreshError) {  //incase the refresh-token has expired
       processQueue(refreshError);
 

@@ -7,6 +7,8 @@ import {
   registerUser,
 } from "../../services/api/authApi";
 
+import { setAccessToken } from "../../services/api/axios";
+
 // -----------------------------
 // INITIAL STATE
 // -----------------------------
@@ -42,10 +44,11 @@ export const initializeAuth = createAsyncThunk(
 
 export const login = createAsyncThunk(
   "auth/login",
-
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await loginUser(credentials);
+
+      setAccessToken(response.data.accessToken);
 
       return response.data.user;
     } catch (error) {

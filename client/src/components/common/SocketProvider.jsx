@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { addNotification } from "../../features/notifications/notificationSlice";
-import { socket } from "../../services/socket/socket";
+import { socket, connectSocket } from "../../services/socket/socket";
 
 const SocketProvider = ({ children }) => {
   const dispatch = useDispatch();
@@ -24,7 +24,7 @@ const SocketProvider = ({ children }) => {
     socket.on("notification:new", handleNewNotification);
 
     if (!socket.connected) {
-      socket.connect();
+      connectSocket();
     }
 
     return () => {

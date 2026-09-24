@@ -12,9 +12,9 @@ const parseCookies = (cookieHeader = "") => {
 
 const authenticateSocket = async (socket, next) => {
   try {
-    const cookies = parseCookies(socket.handshake.headers.cookie || "");
-
-    const token = cookies.accessToken;
+    const token =
+      socket.handshake.auth?.token ||
+      parseCookies(socket.handshake.headers.cookie || "").accessToken;
 
     const user = await verifyAccessToken(token);
 
