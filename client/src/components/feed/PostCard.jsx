@@ -34,7 +34,7 @@ import {
 } from "../../services/api/postApi";
 
 import { removePost } from "../../features/posts/postSlice";
-import { showErrorToast, showSuccessToast } from "../common/toast";
+import { showErrorToast, showSuccessToast } from "../common/Toast";
 
 const MEDIA_HEIGHT = { height: "min(52vh, 420px)" };
 
