@@ -24,7 +24,7 @@ const login = asyncHandler(async (req, res) => {
   const cookieOptions = {
     httpOnly: true,
     secure: env.nodeEnv === "production",
-    sameSite: "strict",
+    sameSite: "none",
   };
 
   return res
@@ -46,14 +46,14 @@ const logout = asyncHandler(async (req, res) => {
   const cookieOptions = {
     httpOnly: true,
     secure: env.nodeEnv === "production",
-    sameSite: "strict",
+    sameSite: "none",
   };
 
   return res
     .clearCookie("accessToken", cookieOptions)
     .clearCookie("refreshToken", cookieOptions)
     .status(200)
-    .json(new ApiResponse(200, null, "Logged out successfully."));
+    .json(new ApiResponse(200, "Logged out successfully.", null));
 });
 
 const refreshToken = asyncHandler(async (req, res) => {
@@ -65,7 +65,7 @@ const refreshToken = asyncHandler(async (req, res) => {
   const cookieOptions = {
     httpOnly: true,
     secure: env.nodeEnv === "production",
-    sameSite: "strict",
+    sameSite: "none",
   };
 
   return res
@@ -78,7 +78,7 @@ const refreshToken = asyncHandler(async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     })
     .status(200)
-    .json(new ApiResponse(200, null, "Access token refreshed successfully."));
+    .json(new ApiResponse(200, "Access token refreshed successfully.", null));
 });
 
 const getMe = asyncHandler(async (req, res) => {
