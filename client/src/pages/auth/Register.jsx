@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import {
   showErrorToast,
   showSuccessToast,
-} from "../../components/common/toast";
+} from "../../components/common/Toast";
 
 const Register = () => {
   const dispatch = useDispatch();
