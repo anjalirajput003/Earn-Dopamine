@@ -25,7 +25,6 @@ const login = asyncHandler(async (req, res) => {
     httpOnly: true,
     secure: true,
     sameSite: "none",
-    domain: ".onrender.com",
   };
 
   return res
@@ -38,7 +37,12 @@ const login = asyncHandler(async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     })
     .status(200)
-    .json(new ApiResponse(200, "Logged in successfully.", { user }));
+    .json(
+      new ApiResponse(200, "Logged in successfully.", {
+        user,
+        accessToken,
+      }),
+    );
 });
 
 const logout = asyncHandler(async (req, res) => {
@@ -48,7 +52,6 @@ const logout = asyncHandler(async (req, res) => {
     httpOnly: true,
     secure: true,
     sameSite: "none",
-    domain: ".onrender.com",
   };
 
   return res
@@ -68,7 +71,6 @@ const refreshToken = asyncHandler(async (req, res) => {
     httpOnly: true,
     secure: true,
     sameSite: "none",
-    domain: ".onrender.com",
   };
 
   return res
