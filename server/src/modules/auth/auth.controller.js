@@ -25,6 +25,7 @@ const login = asyncHandler(async (req, res) => {
     httpOnly: true,
     secure: true,
     sameSite: "none",
+    domain: ".onrender.com",
   };
 
   return res
@@ -47,6 +48,7 @@ const logout = asyncHandler(async (req, res) => {
     httpOnly: true,
     secure: true,
     sameSite: "none",
+    domain: ".onrender.com",
   };
 
   return res
@@ -66,6 +68,7 @@ const refreshToken = asyncHandler(async (req, res) => {
     httpOnly: true,
     secure: true,
     sameSite: "none",
+    domain: ".onrender.com",
   };
 
   return res
