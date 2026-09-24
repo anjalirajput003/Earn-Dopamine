@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { createNewPost } from "../../features/posts/postSlice";
 
-import { showErrorToast, showSuccessToast } from "../common/toast";
+import { showErrorToast, showSuccessToast } from "../common/Toast";
 
 const MAX_IMAGES = 10;
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
