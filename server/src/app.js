@@ -49,7 +49,7 @@ const apiLimiter = rateLimit({
   },
 });
 
-app.use("/api", apiLimiter);
+// app.use("/api", apiLimiter);
 
 app.use("/api/v1", apiRouter);
 
