@@ -23,7 +23,7 @@ const login = asyncHandler(async (req, res) => {
 
   const cookieOptions = {
     httpOnly: true,
-    secure: env.nodeEnv === "production",
+    secure: true,
     sameSite: "none",
   };
 
@@ -45,7 +45,7 @@ const logout = asyncHandler(async (req, res) => {
 
   const cookieOptions = {
     httpOnly: true,
-    secure: env.nodeEnv === "production",
+    secure: true,
     sameSite: "none",
   };
 
@@ -64,7 +64,7 @@ const refreshToken = asyncHandler(async (req, res) => {
 
   const cookieOptions = {
     httpOnly: true,
-    secure: env.nodeEnv === "production",
+    secure: true,
     sameSite: "none",
   };
 
