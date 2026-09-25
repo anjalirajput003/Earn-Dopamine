@@ -1,9 +1,6 @@
 import mongoose from "mongoose";
-
 import Conversation from "./conversation.model.js";
-
 import User from "../users/user.model.js";
-
 import ApiError from "../../utils/ApiError.js";
 import Message from "./message.model.js";
 
@@ -12,10 +9,7 @@ const getOrCreateConversation = async ({ userId, otherUserId }) => {
     throw new ApiError(400, "You cannot create a conversation with yourself.");
   }
 
-  const otherUserExists = await User.exists({
-    _id: otherUserId,
-  });
-
+  const otherUserExists = await User.exists({ _id: otherUserId });
   if (!otherUserExists) {
     throw new ApiError(404, "User not found.");
   }
@@ -31,15 +25,6 @@ const getOrCreateConversation = async ({ userId, otherUserId }) => {
   });
 
   if (conversation) {
-    await Conversation.updateOne(
-      { _id: conversation._id },
-      {
-        $pull: {
-          deletedFor: userId,
-        },
-      },
-    );
-
     return conversation;
   }
 
@@ -72,14 +57,7 @@ const getUserConversations = async ({ userId }) => {
   }
 
   const conversations = await Conversation.find({
-    $and: [
-      {
-        $or: [{ participantOne: userId }, { participantTwo: userId }],
-      },
-      {
-        deletedFor: { $ne: userId },
-      },
-    ],
+    $or: [{ participantOne: userId }, { participantTwo: userId }],
   })
     .sort({ updatedAt: -1 })
     .populate("participantOne", "username fullName avatar isVerified")
@@ -96,13 +74,10 @@ const getUserConversations = async ({ userId }) => {
         : conversation.participantOne;
 
       const [lastMessage, unreadCount] = await Promise.all([
-        Message.findOne({
-          conversation: conversation._id,
-        })
+        Message.findOne({ conversation: conversation._id })
           .sort({ createdAt: -1 })
           .select("sender content createdAt isRead")
           .lean(),
-
         Message.countDocuments({
           conversation: conversation._id,
           sender: { $ne: userId },
@@ -120,7 +95,8 @@ const getUserConversations = async ({ userId }) => {
     }),
   );
 
-  return result;
+  // The Fix: Only return conversations that have at least one message
+  return result.filter((convo) => convo.lastMessage != null);
 };
 
 const deleteConversationForUser = async ({ userId, conversationId }) => {
@@ -137,14 +113,13 @@ const deleteConversationForUser = async ({ userId, conversationId }) => {
     throw new ApiError(404, "Conversation not found.");
   }
 
-  await Conversation.updateOne(
-    { _id: conversationId },
-    {
-      $addToSet: {
-        deletedFor: userId,
-      },
-    },
-  );
+  // The Fix: Hard delete the conversation AND wipe its messages permanently
+  await Conversation.deleteOne({ _id: conversationId });
+  await Message.deleteMany({ conversation: conversationId });
 };
 
-export { getOrCreateConversation, getUserConversations, deleteConversationForUser };
+export {
+  getOrCreateConversation,
+  getUserConversations,
+  deleteConversationForUser,
+};

@@ -22,9 +22,10 @@ import {
 
 const router = Router();
 
+// Get all (active) conversations
 router.get("/", verifyJWT, getUserConversationsController);
 
-//create conversation
+// Create conversation
 router.post(
   "/:otherUserId",
   verifyJWT,
@@ -32,15 +33,10 @@ router.post(
   createConversationController,
 );
 
-//delete conversation
-//delete conversation for current user
-router.delete(
-  "/:conversationId",
-  verifyJWT,
-  deleteConversationController,
-);
+// Delete conversation
+router.delete("/:conversationId", verifyJWT, deleteConversationController);
 
-//send message
+// Send message
 router.post(
   "/:conversationId/messages",
   verifyJWT,
@@ -48,7 +44,7 @@ router.post(
   sendMessageController,
 );
 
-//get messages
+// Get messages
 router.get(
   "/:conversationId/messages",
   verifyJWT,
@@ -56,7 +52,7 @@ router.get(
   getMessagesController,
 );
 
-//mark message as read
+// Mark message as read
 router.patch(
   "/:conversationId/messages/read",
   verifyJWT,
