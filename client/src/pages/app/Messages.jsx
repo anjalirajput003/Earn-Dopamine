@@ -37,6 +37,7 @@ const Messages = () => {
   const [isSending, setIsSending] = useState(false);
   const [isDeletingConversation, setIsDeletingConversation] = useState(false);
   const [error, setError] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const messagesEndRef = useRef(null);
 
@@ -330,14 +331,6 @@ const Messages = () => {
       return;
     }
 
-    const confirmed = window.confirm(
-      `Delete your conversation with ${activeUser?.username || "this user"}?`,
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
     try {
       setIsDeletingConversation(true);
       setError("");
@@ -351,6 +344,9 @@ const Messages = () => {
       setConversation(null);
       setMessages([]);
       setContent("");
+      setShowDeleteModal(false); // Close the modal on success
+
+      // Fire your toast notification here (e.g., toast.success("Conversation deleted"))
 
       navigate("/messages");
     } catch (err) {
@@ -603,16 +599,12 @@ const Messages = () => {
               <div className="ml-auto">
                 <button
                   type="button"
-                  onClick={handleDeleteConversation}
+                  onClick={() => setShowDeleteModal(true)} // Opens the modal
                   disabled={isDeletingConversation}
                   title="Delete conversation"
                   className="flex h-9 w-9 items-center justify-center text-neutral-500 transition hover:bg-red-500/10 hover:text-red-400 disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                  {isDeletingConversation ? (
-                    <Loader2 size={17} className="animate-spin" />
-                  ) : (
-                    <Trash2 size={17} />
-                  )}
+                  <Trash2 size={17} />
                 </button>
               </div>
             </header>
@@ -730,6 +722,44 @@ const Messages = () => {
               </div>
             </form>
           </>
+        )}
+        {/* Custom Delete Confirmation Modal */}
+        {showDeleteModal && (
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+            <div className="w-full max-w-sm rounded-2xl border border-neutral-800 bg-[#111111] p-6 shadow-xl">
+              <h3 className="text-lg font-semibold text-white">
+                Delete Conversation?
+              </h3>
+              <p className="mt-2 text-sm text-neutral-400">
+                This will permanently remove all messages with{" "}
+                <span className="text-white font-medium">
+                  {activeUser?.username || "this user"}
+                </span>
+                . This action cannot be undone.
+              </p>
+
+              <div className="mt-6 flex justify-end gap-3">
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  disabled={isDeletingConversation}
+                  className="rounded-lg px-4 py-2 text-sm font-medium text-neutral-300 transition hover:bg-neutral-800 disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDeleteConversation}
+                  disabled={isDeletingConversation}
+                  className="flex min-w-[80px] items-center justify-center rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700 disabled:opacity-50"
+                >
+                  {isDeletingConversation ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    "Delete"
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </section>
     </div>
