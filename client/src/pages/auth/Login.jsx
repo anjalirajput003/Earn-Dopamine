@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 
 import { login } from "../../features/auth/authSlice";
-import { toast } from "sonner";
 import {
   showErrorToast,
   showSuccessToast,

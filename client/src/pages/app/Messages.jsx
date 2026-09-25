@@ -12,7 +12,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   showErrorToast,
   showSuccessToast,
-} from "../../components/common/toast/toast";
+} from "../../components/common/Toast";
 
 import { useSelector } from "react-redux";
 
