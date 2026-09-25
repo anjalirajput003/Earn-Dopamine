@@ -8,6 +8,7 @@ import {
 } from "../../services/api/authApi";
 
 import { setAccessToken } from "../../services/api/axios";
+import api from "../../services/api/axios";
 
 // -----------------------------
 // INITIAL STATE
@@ -28,9 +29,12 @@ const initialState = {
 //checks who the currently logged in user is and what is its state-> loggedin or logged out
 export const initializeAuth = createAsyncThunk(
   "auth/initializeAuth",
-
   async (_, { rejectWithValue }) => {
     try {
+      const refreshResponse = await api.post("/auth/refresh-token");
+
+      setAccessToken(refreshResponse.data.accessToken);
+
       const response = await getCurrentUser();
 
       return response.data;
