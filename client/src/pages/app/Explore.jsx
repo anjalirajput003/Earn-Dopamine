@@ -1,5 +1,5 @@
-import { Compass, Loader2, Users } from "lucide-react";
-import { useEffect } from "react";
+import { Compass, Loader2, Users, Search } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -12,6 +12,8 @@ import {
 const Explore = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [searchQuery, setSearchQuery] = useState("");
 
   const { discoverableRooms, isLoading, isJoining, error } = useSelector(
     (state) => state.studyRoom,
@@ -38,10 +40,16 @@ const Explore = () => {
     });
   };
 
+  // Filter rooms based on search query
+  const filteredRooms =
+    discoverableRooms?.filter((room) =>
+      room.name?.toLowerCase().includes(searchQuery.toLowerCase().trim()),
+    ) || [];
+
   return (
     <div className="min-h-full px-4 py-6 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-8">
+        <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-purple-500/20 bg-purple-500/10 text-purple-400">
               <Compass size={21} />
@@ -57,6 +65,21 @@ const Explore = () => {
               </p>
             </div>
           </div>
+
+          {/* Search Bar */}
+          <div className="relative w-full sm:w-72 md:w-96">
+            <Search
+              size={16}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-600"
+            />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search study rooms..."
+              className="h-10 w-full rounded-lg border border-neutral-800 bg-[#111111] pl-9 pr-3 text-sm text-white outline-none transition placeholder:text-neutral-600 focus:border-neutral-700 focus:ring-1 focus:ring-neutral-700"
+            />
+          </div>
         </div>
 
         {isLoading ? (
@@ -69,7 +92,6 @@ const Explore = () => {
               <p className="text-sm font-medium text-red-400">
                 Couldn't load study rooms
               </p>
-
               <p className="mt-1 text-sm text-neutral-600">{error}</p>
             </div>
           </div>
@@ -78,18 +100,28 @@ const Explore = () => {
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-purple-500/10 text-purple-400">
               <Compass size={25} />
             </div>
-
             <h2 className="mt-5 text-base font-semibold text-white">
               No study rooms to discover
             </h2>
-
             <p className="mt-2 max-w-md text-sm leading-6 text-neutral-500">
               There aren't any study rooms available to join right now.
             </p>
           </div>
+        ) : filteredRooms.length === 0 ? (
+          <div className="flex min-h-[300px] flex-col items-center justify-center border border-neutral-800 bg-[#111111] px-6 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-neutral-900 text-neutral-500">
+              <Search size={25} />
+            </div>
+            <h2 className="mt-5 text-base font-semibold text-white">
+              No results found
+            </h2>
+            <p className="mt-2 max-w-md text-sm leading-6 text-neutral-500">
+              We couldn't find any study rooms matching "{searchQuery}".
+            </p>
+          </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {discoverableRooms.map((room) => {
+            {filteredRooms.map((room) => {
               const creator = room.creator;
 
               return (
@@ -145,7 +177,6 @@ const Explore = () => {
                     {isJoining && (
                       <Loader2 size={15} className="animate-spin" />
                     )}
-
                     {isJoining ? "Joining..." : "Join room"}
                   </button>
                 </div>

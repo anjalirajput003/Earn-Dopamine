@@ -9,6 +9,11 @@ import {
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import {
+  showErrorToast,
+  showSuccessToast,
+} from "../../components/common/toast/toast";
+
 import { useSelector } from "react-redux";
 
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -346,11 +351,17 @@ const Messages = () => {
       setContent("");
       setShowDeleteModal(false); // Close the modal on success
 
+      showSuccessToast(
+        "Conversation deleted",
+        `Your conversation with ${activeUser?.username || "this user"} has been deleted.`,
+      );
+
       // Fire your toast notification here (e.g., toast.success("Conversation deleted"))
 
       navigate("/messages");
     } catch (err) {
-      setError(
+      showErrorToast(
+        "Delete failed",
         err.response?.data?.message || "Failed to delete the conversation.",
       );
     } finally {
