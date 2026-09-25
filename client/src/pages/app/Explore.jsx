@@ -40,11 +40,17 @@ const Explore = () => {
     });
   };
 
-  // Filter rooms based on search query
+  // Filter rooms based on search query (checks name and description)
   const filteredRooms =
-    discoverableRooms?.filter((room) =>
-      room.name?.toLowerCase().includes(searchQuery.toLowerCase().trim()),
-    ) || [];
+    discoverableRooms?.filter((room) => {
+      const query = searchQuery.toLowerCase().trim();
+      if (!query) return true;
+
+      const roomName = (room.name || "").toLowerCase();
+      const roomDescription = (room.description || "").toLowerCase();
+
+      return roomName.includes(query) || roomDescription.includes(query);
+    }) || [];
 
   return (
     <div className="min-h-full px-4 py-6 sm:px-6 lg:px-8">
@@ -187,6 +193,6 @@ const Explore = () => {
       </div>
     </div>
   );
-};
+};;
 
 export default Explore;

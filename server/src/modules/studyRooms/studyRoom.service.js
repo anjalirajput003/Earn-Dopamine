@@ -100,9 +100,8 @@ const getMyStudyRooms = async ({ userId }) => {
 };
 
 const getDiscoverableStudyRooms = async ({ userId }) => {
-  const studyRooms = await StudyRoom.find({
-    participants: { $ne: userId },
-  })
+  // Pass an empty object to find() so it returns ALL rooms
+  const studyRooms = await StudyRoom.find({})
     .populate("creator", "username fullName avatar isVerified")
     .populate("participants", "username fullName avatar isVerified")
     .sort({ createdAt: -1 })
