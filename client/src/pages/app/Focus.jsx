@@ -17,6 +17,7 @@ const Focus = () => {
   const { rooms, isCreating, isLoading, isDeleting, error } = useSelector(
     (state) => state.studyRoom,
   );
+  const user = useSelector((state) => state.auth.user);
 
   const [showCreateRoom, setShowCreateRoom] = useState(false);
   const [roomName, setRoomName] = useState("");
@@ -169,14 +170,16 @@ const Focus = () => {
                     Open room
                   </button>
 
-                  <button
-                    type="button"
-                    disabled={isDeleting}
-                    onClick={() => setRoomToDelete(room)}
-                    className="rounded-full border border-red-500/20 px-4 py-2.5 text-sm font-medium text-red-400 transition hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    Delete
-                  </button>
+                  {room.creator?._id === user?._id && (
+                    <button
+                      type="button"
+                      disabled={isDeleting}
+                      onClick={() => setRoomToDelete(room)}
+                      className="rounded-full border border-red-500/20 px-4 py-2.5 text-sm font-medium text-red-400 transition hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      Delete
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
