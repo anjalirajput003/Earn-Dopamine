@@ -33,7 +33,7 @@ export const initializeAuth = createAsyncThunk(
     try {
       const refreshResponse = await api.post("/auth/refresh-token");
 
-      setAccessToken(refreshResponse.data.accessToken);
+      setAccessToken(refreshResponse.data.data.accessToken);
 
       const response = await getCurrentUser();
 

@@ -83,7 +83,11 @@ const refreshToken = asyncHandler(async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     })
     .status(200)
-    .json(new ApiResponse(200, "Access token refreshed successfully.", null));
+    .json(
+      new ApiResponse(200, "Access token refreshed successfully.", {
+        accessToken,
+      }),
+    );
 });
 
 const getMe = asyncHandler(async (req, res) => {
