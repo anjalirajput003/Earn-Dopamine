@@ -2,7 +2,11 @@ import asyncHandler from "../../utils/asyncHandler.js";
 
 import ApiResponse from "../../utils/ApiResponse.js";
 
-import { getOrCreateConversation, getUserConversations } from "./chat.service.js";
+import {
+  getOrCreateConversation,
+  getUserConversations,
+  deleteConversationForUser,
+} from "./chat.service.js";
 
 const createConversationController = asyncHandler(async (req, res) => {
   const { otherUserId } = req.validatedData.params;
@@ -15,11 +19,7 @@ const createConversationController = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(
-      new ApiResponse(
-        200,
-        "Conversation fetched successfully.",
-        conversation,
-      ),
+      new ApiResponse(200, "Conversation fetched successfully.", conversation),
     );
 });
 
@@ -39,4 +39,21 @@ const getUserConversationsController = asyncHandler(async (req, res) => {
     );
 });
 
-export { createConversationController, getUserConversationsController };
+const deleteConversationController = asyncHandler(async (req, res) => {
+  const { conversationId } = req.params;
+
+  await deleteConversationForUser({
+    userId: req.user._id,
+    conversationId,
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "Conversation deleted successfully."));
+});
+
+export {
+  createConversationController,
+  getUserConversationsController,
+  deleteConversationController,
+};

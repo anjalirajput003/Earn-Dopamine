@@ -31,6 +31,15 @@ const getOrCreateConversation = async ({ userId, otherUserId }) => {
   });
 
   if (conversation) {
+    await Conversation.updateOne(
+      { _id: conversation._id },
+      {
+        $pull: {
+          deletedFor: userId,
+        },
+      },
+    );
+
     return conversation;
   }
 
@@ -63,7 +72,14 @@ const getUserConversations = async ({ userId }) => {
   }
 
   const conversations = await Conversation.find({
-    $or: [{ participantOne: userId }, { participantTwo: userId }],
+    $and: [
+      {
+        $or: [{ participantOne: userId }, { participantTwo: userId }],
+      },
+      {
+        deletedFor: { $ne: userId },
+      },
+    ],
   })
     .sort({ updatedAt: -1 })
     .populate("participantOne", "username fullName avatar isVerified")
@@ -107,4 +123,28 @@ const getUserConversations = async ({ userId }) => {
   return result;
 };
 
-export { getOrCreateConversation, getUserConversations };
+const deleteConversationForUser = async ({ userId, conversationId }) => {
+  if (!mongoose.isValidObjectId(conversationId)) {
+    throw new ApiError(400, "Invalid conversation ID.");
+  }
+
+  const conversation = await Conversation.findOne({
+    _id: conversationId,
+    $or: [{ participantOne: userId }, { participantTwo: userId }],
+  });
+
+  if (!conversation) {
+    throw new ApiError(404, "Conversation not found.");
+  }
+
+  await Conversation.updateOne(
+    { _id: conversationId },
+    {
+      $addToSet: {
+        deletedFor: userId,
+      },
+    },
+  );
+};
+
+export { getOrCreateConversation, getUserConversations, deleteConversationForUser };

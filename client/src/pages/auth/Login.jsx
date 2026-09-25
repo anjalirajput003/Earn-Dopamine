@@ -99,12 +99,12 @@ const Login = () => {
             <div className="h-px flex-1 bg-neutral-800" />
           </div>
 
-          <button
+          {/* <button
             type="button"
             className="w-full text-center text-xs text-neutral-400 transition hover:text-white"
           >
             Forgot password?
-          </button>
+          </button> */}
         </section>
 
         <section className="mt-3 border border-neutral-800 bg-[#111111] px-6 py-5 text-center text-sm">

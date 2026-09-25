@@ -1,4 +1,11 @@
-import { ArrowLeft, Loader2, MessageCircle, Search, Send } from "lucide-react";
+import {
+  ArrowLeft,
+  Loader2,
+  MessageCircle,
+  Search,
+  Send,
+  Trash2,
+} from "lucide-react";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -28,7 +35,7 @@ const Messages = () => {
   const [isConversationLoading, setIsConversationLoading] = useState(false);
   const [isMessagesLoading, setIsMessagesLoading] = useState(false);
   const [isSending, setIsSending] = useState(false);
-
+  const [isDeletingConversation, setIsDeletingConversation] = useState(false);
   const [error, setError] = useState("");
 
   const messagesEndRef = useRef(null);
@@ -318,6 +325,43 @@ const Messages = () => {
     navigate("/messages");
   };
 
+  const handleDeleteConversation = async () => {
+    if (!conversation?._id || isDeletingConversation) {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Delete your conversation with ${activeUser?.username || "this user"}?`,
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setIsDeletingConversation(true);
+      setError("");
+
+      await api.delete(`/conversations/${conversation._id}`);
+
+      setConversations((previousConversations) =>
+        previousConversations.filter((item) => item._id !== conversation._id),
+      );
+
+      setConversation(null);
+      setMessages([]);
+      setContent("");
+
+      navigate("/messages");
+    } catch (err) {
+      setError(
+        err.response?.data?.message || "Failed to delete the conversation.",
+      );
+    } finally {
+      setIsDeletingConversation(false);
+    }
+  };
+
   /*
    * Send message.
    */
@@ -555,6 +599,21 @@ const Messages = () => {
                 <p className="truncate text-xs text-neutral-600">
                   {activeUser?.fullName || "Direct message"}
                 </p>
+              </div>
+              <div className="ml-auto">
+                <button
+                  type="button"
+                  onClick={handleDeleteConversation}
+                  disabled={isDeletingConversation}
+                  title="Delete conversation"
+                  className="flex h-9 w-9 items-center justify-center text-neutral-500 transition hover:bg-red-500/10 hover:text-red-400 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  {isDeletingConversation ? (
+                    <Loader2 size={17} className="animate-spin" />
+                  ) : (
+                    <Trash2 size={17} />
+                  )}
+                </button>
               </div>
             </header>
 

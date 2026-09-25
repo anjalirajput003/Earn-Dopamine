@@ -15,6 +15,13 @@ const conversationSchema = new Schema(
       ref: "User",
       required: true,
     },
+
+    deletedFor: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   {
     timestamps: true,

@@ -2,7 +2,11 @@ import { Router } from "express";
 
 import verifyJWT from "../../middlewares/auth.middleware.js";
 import validate from "../../middlewares/validate.middleware.js";
-import { createConversationController, getUserConversationsController } from "./chat.controller.js";
+import {
+  createConversationController,
+  getUserConversationsController,
+  deleteConversationController,
+} from "./chat.controller.js";
 import {
   sendMessageController,
   getMessagesController,
@@ -26,6 +30,14 @@ router.post(
   verifyJWT,
   validate(createConversationSchema),
   createConversationController,
+);
+
+//delete conversation
+//delete conversation for current user
+router.delete(
+  "/:conversationId",
+  verifyJWT,
+  deleteConversationController,
 );
 
 //send message
