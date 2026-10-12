@@ -36,3 +36,5 @@ earn-dopamine/
 └── README.md
 ```
 
+Here is the project's live link :
+https://earn-dopamine-frontend.onrender.com
