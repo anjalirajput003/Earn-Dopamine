@@ -4,7 +4,7 @@
 
 The idea behind the project is to create a social platform where users can focus more on **doing meaningful activities** rather than just consuming content.
 
-Users can create posts, connect with other users, set goals, track milestones, collaborate with others, join study rooms, and communicate through real-time messaging.
+Users can create posts, connect with other users, set goals, track milestones, join study rooms, and communicate through real-time messaging.
 
 ### Main Features
 
