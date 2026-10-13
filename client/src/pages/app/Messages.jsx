@@ -141,7 +141,7 @@ const Messages = () => {
     };
 
     openConversation();
-  }, [otherUserId, conversations, loadConversations]);
+  }, [otherUserId, loadConversations]);
 
   /*
    * Load messages for the active conversation.
