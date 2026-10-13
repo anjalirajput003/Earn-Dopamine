@@ -35,9 +35,14 @@ const initializeChatSocket = (socket) => {
         .select("participantOne participantTwo")
         .lean();
 
-      if (!conversation) {
-        return;
-      }
+     if (!conversation) {
+       acknowledge?.({
+         success: false,
+         message: "Conversation not found.",
+       });
+
+       return;
+     }
 
       const io = getIO();
 
@@ -58,6 +63,7 @@ const initializeChatSocket = (socket) => {
       });
 
     } catch (error) {
+      console.error("chat:message error:", error);
       acknowledge?.({
         success: false,
         message: error.message || "Failed to send message.",

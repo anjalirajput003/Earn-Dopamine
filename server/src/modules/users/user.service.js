@@ -150,4 +150,11 @@ const checkUsernameAvailability = async (username) => {
   return !userExists;
 };
 
-export { updateProfile, updateAvatar, updateCoverImage, getUserByUsername, searchUsers, checkUsernameAvailability };
+export {
+  updateProfile,
+  updateAvatar,
+  updateCoverImage,
+  getUserByUsername,
+  searchUsers,
+  checkUsernameAvailability,
+};

@@ -389,14 +389,22 @@ const Messages = () => {
     setIsSending(true);
     setError("");
 
-    socket.emit(
+    socket.timeout(10000).emit(
       "chat:message",
       {
         conversationId: conversation._id,
         content: trimmedContent,
       },
-      async (response) => {
+      async (timeoutError, response) => {
         setIsSending(false);
+
+        if (timeoutError) {
+          setError(
+            "Message could not be sent. The chat server did not respond.",
+          );
+
+          return;
+        }
 
         if (!response?.success) {
           setError(response?.message || "Failed to send message.");
@@ -405,10 +413,6 @@ const Messages = () => {
 
         setContent("");
 
-        /*
-         * Make sure a newly-created conversation
-         * appears in the conversation list.
-         */
         const updatedConversations = await loadConversations();
 
         setConversations(updatedConversations);
