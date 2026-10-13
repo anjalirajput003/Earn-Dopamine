@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import mediaSchema from "../../socket/schemas/media.schema";
+import mediaSchema from "../../schemas/media.schema.js";
 
 const { Schema } = mongoose;
 
