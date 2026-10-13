@@ -13,9 +13,9 @@ const Explore = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const { discoverableRooms, isLoading, isJoining, error } = useSelector(
+ const [searchQuery, setSearchQuery] = useState("");
+ const [joiningRoomId, setJoiningRoomId] = useState(null);
+  const { discoverableRooms, isLoading, error } = useSelector(
     (state) => state.studyRoom,
   );
 
@@ -24,22 +24,28 @@ const Explore = () => {
   }, [dispatch]);
 
   const handleJoin = async (roomId) => {
-    const result = await dispatch(joinExistingStudyRoom(roomId));
+    setJoiningRoomId(roomId);
 
-    if (joinExistingStudyRoom.fulfilled.match(result)) {
-      toast.success("Joined study room", {
-        description: "The study room has been added to your Focus rooms.",
+    try {
+      const result = await dispatch(joinExistingStudyRoom(roomId));
+
+      if (joinExistingStudyRoom.fulfilled.match(result)) {
+        toast.success("Joined study room", {
+          description: "The study room has been added to your Focus rooms.",
+        });
+
+        navigate(`/focus/room/${roomId}`);
+        return;
+      }
+
+      toast.error("Couldn't join study room", {
+        description:
+          result.payload || "Something went wrong. Please try again.",
       });
-
-      navigate(`/focus/room/${roomId}`);
-      return;
+    } finally {
+      setJoiningRoomId(null);
     }
-
-    toast.error("Couldn't join study room", {
-      description: result.payload || "Something went wrong. Please try again.",
-    });
   };
-
   // Filter rooms based on search query (checks name and description)
   const filteredRooms =
     discoverableRooms?.filter((room) => {
@@ -177,13 +183,14 @@ const Explore = () => {
                   <button
                     type="button"
                     onClick={() => handleJoin(room._id)}
-                    disabled={isJoining}
+                    disabled={joiningRoomId !== null}
                     className="mt-6 flex w-full items-center justify-center gap-2 bg-purple-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-purple-400 disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    {isJoining && (
+                    {joiningRoomId === room._id && (
                       <Loader2 size={15} className="animate-spin" />
                     )}
-                    {isJoining ? "Joining..." : "Join room"}
+
+                    {joiningRoomId === room._id ? "Joining..." : "Join room"}
                   </button>
                 </div>
               );
